@@ -1,5 +1,7 @@
 void setup() {
   // Set PB1/2 as outputs.
+
+  Serial.begin(9600);
   DDRB |= (1 << DDB1) | (1 << DDB2);
 
   TCCR1A =
@@ -18,17 +20,19 @@ void setup() {
   // 0x7fff, etc. A lower value for ICR1 will
   // allow a faster PWM frequency.
   ICR1 = 0x0140;  //make the freq 50k
+
 }
 
 void loop() {
-  // Use OCR1A and OCR1B to control the PWM
-  // duty cycle. Duty cycle = OCR1A / ICR1.
-  // OCR1A controls PWM on pin 9 (PORTB1).
-  // OCR1B controls PWM on pin 10 (PORTB2).
-  //OCR1A = 0x0000;
-  //delay(500);
-  OCR1A = 0x007F;
-  //delay(500);
-  //OCR1A = 0x0140;
-  //delay(500);
+
+  int i = 0;
+  OCR1A = 0;
+  for(i = 0; i < 320; i++) {
+    OCR1A += 0x03;
+    delay(200);
+    i += 2;
+    Serial.print(i);
+  }
+  // put your main code here, to run repeatedly:
+
 }
