@@ -5,8 +5,8 @@ LiquidCrystal lcd(12, 11, 5, 6, 7, 8);
 int analogPin = 3;
 int val = 0;
 float voltage = 0;
-float voltageRef = 4.9;
-float scale = 4.9;
+float voltageRef = 5.01;
+float scale = 1;
 int resolution = 1020;
 
 void setup() {
@@ -19,7 +19,15 @@ void setup() {
 
 }
 
+float voltage_read(int pin, float scale) {
+  val = analogRead(pin);
+  return((val&resolution)/ float(resolution)*voltageRef*scale);
+}
+
 void loop() {
-  // put your main code here, to run repeatedly:
+  voltage = voltage_read(analogPin, scale);
+  lcd.print(voltage);
+  delay(500);
+  lcd.clear();
 
 }

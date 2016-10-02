@@ -14,6 +14,7 @@ void setup() {
 float voltage_read(int pin, float scale) {
   val = analogRead(pin);
   return((val&resolution) / (float)resolution * voltageRef * scale);
+  //return val;
 }
 
 void loop() {
