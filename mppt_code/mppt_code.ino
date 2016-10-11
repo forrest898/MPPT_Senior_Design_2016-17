@@ -10,6 +10,7 @@ float i1 = 0;
 float i2 = 0;
 float p1 = 0;
 float p2 = 0;
+float p3 = 0;
 float scale = 4.9;
 float voltageRef = 4.9;
 
@@ -30,7 +31,7 @@ void setup() {
       // No clock prescaling (fastest possible
       // freq).
       (1 << CS10);
-  OCR1A = 0;
+  OCR1A = 0x007F;
   // Set the counter value that corresponds to
   // full duty cycle. For 15-bit PWM use
   // 0x7fff, etc. A lower value for ICR1 will
@@ -40,6 +41,8 @@ void setup() {
   //analog and debug init stuff
   Serial.begin(9600);
   analogReference(EXTERNAL);
+
+  delay(10);
 
 }
 
@@ -57,9 +60,19 @@ void loop() {
 
   v1 = read_v(v_in);
   v2 = read_v(v_out);
-  i1 = ;
-  i2 = ;
+  i1 = read_i(i_in);
+  i2 = read_i(i_out);
+
+  p1 = v1*i1;
+  p2 = v2*i2;
+
+  if(p3 > p2) {
+    IRC1 = IRC1 + 0x0001;
+  } else if(p3 < p2) {
+    IRC1 = IRC1 - 0x0001;
+  }
   
+  p3 = p2;
   // put your main code here, to run repeatedly:
 
 }
