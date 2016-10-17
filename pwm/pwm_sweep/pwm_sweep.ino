@@ -26,11 +26,10 @@ void setup() {
 void loop() {
 
   int i = 0;
-  OCR1A = 0;
-  for(i = 0; i < 320; i++) {
-    OCR1A += 0x03;
-    delay(200);
-    i += 2;
+  OCR1A = 0x03F;
+  for(i = 0; i < 160; i++) {
+    OCR1A += 0x01;
+    delay(20);
     Serial.print(i);
   }
   // put your main code here, to run repeatedly:
