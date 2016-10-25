@@ -7,7 +7,7 @@ int analogPin = 6;
 int val = 0;
 float voltage = 0;
 float voltageRef = 5.02;
-float scale = 3.43;
+float scale = 3.5;
 int resolution = 1020;
 
 void setup() { 
@@ -35,7 +35,7 @@ void loop() {
   lcd.print(voltage);
   lcd.print("\n");
   Serial.println(voltage, 5);
-  if(voltage > 14.4) {
+  if(voltage > 19) {
     digitalWrite(fetSW, LOW);
     lcd.print("Const V\n");
   } else {
