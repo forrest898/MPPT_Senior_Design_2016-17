@@ -5,6 +5,10 @@
 #define DATAOUT 11   // MOSI 
 #define DATAIN 12    // MISO 
 #define SPICK 13  // Clock 
+#define R1  240000
+#define R2  9868
+
+double gain = (R2+R1)/(R2);
 
 SPISettings settings(100000, MSBFIRST, SPI_MODE0);
 
@@ -35,11 +39,7 @@ void loop() {
 int read_adc(int ch) {
   
   int adcval = 0;
-
-  //SPI.setClockDivider(SPI_CLOCK_DIV16);
   
-  //SPI.setBitOrder(MSBFIRST);
-  //SPI.setDataMode(SPI_MODE0);
   SPI.beginTransaction(settings);
   digitalWrite(CS, LOW);
   
@@ -52,8 +52,6 @@ int read_adc(int ch) {
   digitalWrite(CS, HIGH);
   SPI.endTransaction();
   adcval = ((high & 0x0f) << 8) + low;
-  
- // SPI.setClockDivider(SPI_CLOCK_DIV4);
 
   return adcval;
   
