@@ -5,8 +5,9 @@
 #define DATAOUT 11   // MOSI 
 #define DATAIN 12    // MISO 
 #define SPICK 13  // Clock 
-#define R1  240000
-#define R2  9868
+#define R1  380000.0
+#define R2  99500.0
+#define V_ref 4.6
 
 double gain = (R2+R1)/(R2);
 
@@ -29,10 +30,11 @@ int v;
 double voltage;
 void loop() {
   
-  v =read_adc(2);
-  voltage = (v*4.99) / 4095;
-  Serial.print("Voltage on CH0 =");
-  Serial.println(voltage, 5);
+  v =read_adc(6);
+  voltage = (v*V_ref) / 4095.0;
+  voltage = voltage * gain;
+  Serial.print(voltage,5);
+  Serial.println(" V");
   delay(500);
 }
 
