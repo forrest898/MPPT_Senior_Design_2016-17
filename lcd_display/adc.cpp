@@ -2,7 +2,7 @@
 #include "Arduino.h"
 #include <SPI.h>
 
-#define CS 10    // chip-select
+#define CS 3    // chip-select
 #define DATAOUT 11   // MOSI
 #define DATAIN 12    // MISO
 #define SPICK 13  // Clock
