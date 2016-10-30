@@ -62,6 +62,6 @@ void loop() {
   }
 
   MPPT.read_output_power();
-  
+  MPPT.display_all();
 }
 

@@ -64,6 +64,18 @@ float power::power_efficiency(void){
 }
 
 void power::display_all(void){
-  
+  lcd.print("Input Voltage: ");
+  lcd.print(input_voltage,2);
+  lcd.print("Input Current: ");
+  lcd.print(input_current,2);
+  lcd.print("Input Power: ");
+  lcd.print(input_power,2);
+  lcd.print("\n");
+  lcd.print("Output Voltage: ");
+  lcd.print(output_voltage,2);
+  lcd.print("Output Current: ");
+  lcd.print(output_current,2);
+  lcd.print("Output Power: ");
+  lcd.print(output_power,2);
 }
 
