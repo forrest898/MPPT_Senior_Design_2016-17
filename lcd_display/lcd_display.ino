@@ -43,7 +43,7 @@ void setup() {
   PWM_init();
   adc_init();
   set_PWM_frequency(50000);
-  set_PWM_duty(duty);
+  set_PWM_duty_p9(duty);
   delay(100);
   MPPT.read_output_power();
   duty += .01;
