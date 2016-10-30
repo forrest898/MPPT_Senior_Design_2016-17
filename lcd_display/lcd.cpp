@@ -10,8 +10,3 @@ void lcd_init(void){
   // lcd.autoscroll();
 }
 
-void lcd_clear(void){
-  lcd.clear();
-}
-
-

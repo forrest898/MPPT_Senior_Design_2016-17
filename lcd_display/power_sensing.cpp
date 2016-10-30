@@ -4,12 +4,22 @@
 
 float read_voltage(int ch, float scale){
   float voltage;
-  voltage = read_adc(ch);
-  return voltage * scale;
+  int i;
+  voltage = 0.0;
+  for(i = 0; i < 5; i++){
+    voltage += read_adc(ch);
+  }
+  return voltage * scale / 5;
 }
 
-float read_current(int ch){
-  return read_adc(ch);
+float read_current(int ch, float scale){
+  float current;
+  int i;
+  current = 0.0
+  for(i = 0; i < 5; i++){
+    current += read_adc(ch);
+  }
+  return current * scale / 5;
 }
 
 float read_power(int v_ch, int i_ch, float v_scale){
@@ -20,6 +30,6 @@ float read_power(int v_ch, int i_ch, float v_scale){
 }
 
 float power_efficiency(float input_power, float output_power){
-  return input_power/output_power
+  return input_power/output_power;
 }
 
