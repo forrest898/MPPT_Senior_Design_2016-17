@@ -18,31 +18,35 @@ extern LiquidCrystal lcd;
 #define R6  1000.0
 #define RS_1  .01
 
-#define iin_scale 1.00
-#define vin_scale 1.04
+#define iin_scale .93
+#define vin_scale 1.08
 
 
 float vin_gain = (R2 + R1) / (R2) * vin_scale;
-float iin_gain = (R5) / (R6 * RS_1) * iin_scale;
+float iin_gain = (R5 / R6) * RS_1 * iin_scale;
 
 float read_voltage(int ch, float scale){
   float voltage;
   int i;
+  int iterations = 10;
   voltage = 0.0;
-  for(i = 0; i < 5; i++){
+  //averaging for smoothing
+  for(i = 0; i < iterations; i++){
     voltage += read_adc(ch);
   }
-  return voltage * scale / 5;
+  return voltage * scale / iterations;
 }
 
 float read_current(int ch, float scale){
   float current;
   int i;
+  int iterations =10; 
   current = 0.0;
-  for(i = 0; i < 5; i++){
+  //averaging for smoothing
+  for(i = 0; i < iterations; i++){
     current += read_adc(ch);
   }
-  return current * scale / 5;
+  return current * scale / iterations;
 }
 
 float power_efficiency(float input_power, float output_power){
@@ -79,13 +83,13 @@ float power::power_efficiency(void){
 void power::display_all(void){
   lcd.clear();
   lcd.setCursor(0,0);
-  lcd.print("input ");
+  lcd.print("input  ");
   lcd.print(" V:");
-  lcd.print(input_voltage,2);
+  lcd.print(input_voltage,3);
   lcd.setCursor(0,1);
   lcd.print("I:");
-  lcd.print(input_current,2);
-  lcd.print(" P:");
+  lcd.print(input_current,3);
+  lcd.print("  P:");
   lcd.print(input_power,2);
   delay(1000);
   /*
