@@ -13,11 +13,12 @@ float readval, readval2;
 
 void setup() {
   lcd_init();
-  PWM_init();
   adc_init();
-  set_PWM_frequency(50000);
-  set_PWM_duty_p10(.75);
-  delay(20);
+
+  pinMode(3, OUTPUT);
+  TCCR2A = _BV(COM2A1) | _BV(COM2B1) | _BV(WGM21) | _BV(WGM20);
+  TCCR2B = _BV(CS22);
+  OCR2B = 0;
   //pinMode(3, INPUT);
   
  
@@ -25,6 +26,28 @@ void setup() {
 
 void loop() {
 
+  for(int i = 0; i <254; i++) {
+    readval = read_voltage(0, gain);
+    readval2 = read_voltage(2, 10.0);
+    OCR2B += 1;
+    lcd.clear();
+    lcd.print(readval, 2);
+    lcd.print("\n");
+    lcd.print(readval2, 2);
+    delay(50);
+  }
+
+  for(int i  = 254; i > 0; i--) {
+   readval = read_voltage(0, gain);
+   readval2 = read_voltage(2, 10.0);
+    OCR2B -= 1;
+    lcd.clear();
+    lcd.print(readval, 2);
+    lcd.print("\n");
+    lcd.print(readval2, 2);
+    delay(50);
+  }
+/*
   lcd.clear();
   readval = read_voltage(0, gain);
   lcd.print(readval, 2);
