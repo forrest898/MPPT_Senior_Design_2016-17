@@ -17,6 +17,7 @@ class power {
    float old_output_power;
    void read_input_power(void);
    void read_output_power(void);
+   void read_power(void);
    float power_efficiency(void);
    void display_all(void);
 };

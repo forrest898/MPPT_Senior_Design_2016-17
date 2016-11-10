@@ -7,20 +7,20 @@
 #define DATAIN 12    // MISO
 #define SPICK 13  // Clock
 
-extern float V_REF;
+float V_REF = 5.00;
 
 SPISettings settings(100000, MSBFIRST, SPI_MODE0);
 
 void adc_init(void){
-	// SPI initialization
-    pinMode(CS, OUTPUT);
-    pinMode(DATAOUT, OUTPUT);
-    pinMode(DATAIN, INPUT);
-    pinMode(SPICK, OUTPUT);
-    //disable device to start with
-    digitalWrite(CS, HIGH);
-    // Begin SPI reading
-    SPI.begin();
+  // SPI pin initialization
+  pinMode(CS, OUTPUT);
+  pinMode(DATAOUT, OUTPUT);
+  pinMode(DATAIN, INPUT);
+  pinMode(SPICK, OUTPUT);
+  //disable device to start with
+  digitalWrite(CS, HIGH);
+  // Begin SPI reading
+  SPI.begin();
 }
 
 float read_adc(int ch) {

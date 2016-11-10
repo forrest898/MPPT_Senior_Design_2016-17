@@ -4,53 +4,38 @@
 #include "lcd.hpp"
 #include "pwm.hpp"
 #include "power_sensing.hpp"
+#include "relay.hpp"
+#include "charger.hpp"
+#include "MPPT.hpp"
 
-#define RELAY 16 // Relay
-
-#define R3  1.0
-#define R4  1.0
-
-
-#define R7  1.0
-#define R8 1.0
-#define RS_2  1.0
-
-
-float V_REF = 5.00;
-
-float duty = .5;
+extern float duty;
+extern float max_duty;
+extern float min_duty;
 power MPPT;
 
-LiquidCrystal lcd(8, 7, 2, 4 , 5 , 6);
+extern LiquidCrystal lcd;
 
 void setup() {
   //For debugging
   Serial.begin(9600);
+
+  //Initializations
   lcd_init();
-  //PWM_init();
+  PWM_init();
+  relay_init();
   adc_init();
-  //set_PWM_frequency(50000);
-  //set_PWM_duty_p9(duty);
-  delay(100);
-  //MPPT.read_output_power();
-  duty += .01;
-  delay(100);
-  //MPPT.read_output_power();
-  duty -= .01;
+  mppt_init();
+  set_PWM_frequency(50000);
+  set_PWM_duty_p9(duty);
+  
+  relay_on();
+  delay(1000);
   
 }
 
 void loop() {
-  /*
-  if (MPPT.old_output_power > MPPT.output_power ){
-    duty -= .01;
-  }
-  else if(MPPT.old_output_power < MPPT.output_power){
-    duty += .01;
-  }
-  MPPT.read_output_power();
-  */
   MPPT.read_input_power();
   MPPT.display_all();
+
 }
 

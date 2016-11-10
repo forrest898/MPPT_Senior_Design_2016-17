@@ -2,7 +2,7 @@
 #include "lcd.hpp"
 #include <LiquidCrystal.h>
 
-extern LiquidCrystal lcd;
+LiquidCrystal lcd(8, 7, 2, 4 , 5 , 6);
 
 void lcd_init(void){
   lcd.begin(16, 2);
