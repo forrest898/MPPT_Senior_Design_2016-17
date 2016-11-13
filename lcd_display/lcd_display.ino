@@ -34,7 +34,7 @@ void setup() {
 }
 
 void loop() {
-  MPPT.read_input_power();
+  MPPT.read_output_power();
   MPPT.display_all();
 
 }

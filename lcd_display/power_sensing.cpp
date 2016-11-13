@@ -11,25 +11,15 @@ extern LiquidCrystal lcd;
 #define vout_ch 6
 #define iout_ch 7
 
-#define R1  385000.0
-#define R2  99500.0
-#define R3  385000.0
-#define R4  98200.0
-
-#define R5  100000.0
-#define R6  1000.0
-#define RS_1  .01
-
 #define iin_scale 1.0
-#define vin_scale 1.04
-#define vout_scale 1.03
+#define vin_scale 1.0
+#define vout_scale 1.0
 #define iout_scale 1.0
 
-float vin_gain = (R2 + R1) / (R2) * vin_scale;
-float iin_gain = (R5 / R6) * RS_1 * iin_scale;
-
-float vout_gain = (R3 + R4) / (R4) * vout_scale;
-float iout_gain = (R5 / R6) * RS_1 * iout_scale;
+float vin_gain = 5 * vin_scale;
+float iin_gain =  iin_scale;
+float vout_gain = 5 * vout_scale;
+float iout_gain = iout_scale;
 
 float read_voltage(int ch, float scale){
   float voltage;
@@ -39,7 +29,7 @@ float read_voltage(int ch, float scale){
   //averaging for smoothing
   for(i = 0; i < iterations; i++){
     voltage += read_adc(ch);
-    delay(2);
+    delay(10);
   }
   return voltage * scale / iterations;
 }
@@ -52,7 +42,7 @@ float read_current(int ch, float scale){
   //averaging for smoothing
   for(i = 0; i < iterations; i++){
     current += read_adc(ch);
-    delay(2);
+    delay(10);
   }
   return current * scale / iterations;
 }
@@ -73,13 +63,17 @@ power::power(void){
 
 void power::read_input_power(void){ 
   input_voltage = read_voltage(vin_ch,vin_gain);
+  input_voltage = input_voltage * .972 + .07;
   input_current = read_current(iin_ch,iin_gain);
+  input_current = input_current * 1.96 - .18;
   input_power = input_voltage * input_current;
 }
 
 void power::read_output_power(void){
   output_voltage = read_voltage(vout_ch, vout_gain);
+  output_voltage = output_voltage * .968 + .02;
   output_current = read_current(iout_ch, iout_gain);
+  output_current = output_current / 2.5;
   old_output_power = output_power;
   output_power = output_voltage * output_current;
 }
@@ -94,7 +88,7 @@ void power::read_power(void){
 }
 
 void power::display_all(void){
-  
+  /*
   lcd.clear();
   lcd.setCursor(0,0);
   lcd.print("input  ");
@@ -106,8 +100,8 @@ void power::display_all(void){
   lcd.print("  P:");
   lcd.print(input_power,2);
   delay(1000);
-
-  /*
+  */
+  
   lcd.clear();
   lcd.setCursor(0,0);
   lcd.print("output ");
@@ -119,7 +113,7 @@ void power::display_all(void){
   lcd.print(" P:");
   lcd.print(output_power,2);
   delay(1000);
-  
+  /*
   lcd.clear();
   lcd.setCursor(0,0);
   lcd.print("Power efficiency ");
