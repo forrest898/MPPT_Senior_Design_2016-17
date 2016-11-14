@@ -26,16 +26,14 @@ void setup() {
   adc_init();
   mppt_init();
   set_PWM_frequency(50000);
-  set_PWM_duty_p9(duty);
-  
+  set_PWM_duty_p9(.4);
   relay_on();
   delay(1000);
   
 }
 
-void loop() {
-  MPPT.read_output_power();
-  MPPT.display_all();
 
+  //MPPT.read_power();
+  MPPT.display_all();
 }
 

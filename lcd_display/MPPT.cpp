@@ -49,6 +49,17 @@ void mppt(void){
   }
 }
 
+void duty_sweep(void){
+  int i;
+  for(i = min_duty; i < max_duty; i++){
+    MPPT.read_power();
+    MPPT.display_all();
+    set_PWM_duty_p9(i/100.0);
+  }
+}
+
+
+
 //Reads power first to initialize old_power
 void mppt_init(void){
   MPPT.read_power();

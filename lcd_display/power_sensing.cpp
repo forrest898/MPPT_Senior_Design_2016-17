@@ -64,8 +64,10 @@ power::power(void){
 void power::read_input_power(void){ 
   input_voltage = read_voltage(vin_ch,vin_gain);
   input_voltage = input_voltage * .972 + .07;
+  if (input_voltage < 0.1 ) input_voltage = 0.0;
   input_current = read_current(iin_ch,iin_gain);
-  input_current = input_current * 1.96 - .18;
+  input_current = input_current * 1.014 + .0165;
+  if (input_current < 0.1) input_current = 0.0;
   input_power = input_voltage * input_current;
 }
 
@@ -73,7 +75,7 @@ void power::read_output_power(void){
   output_voltage = read_voltage(vout_ch, vout_gain);
   output_voltage = output_voltage * .968 + .02;
   output_current = read_current(iout_ch, iout_gain);
-  output_current = output_current / 2.5;
+  output_current = output_current;
   old_output_power = output_power;
   output_power = output_voltage * output_current;
 }
@@ -88,7 +90,7 @@ void power::read_power(void){
 }
 
 void power::display_all(void){
-  /*
+  
   lcd.clear();
   lcd.setCursor(0,0);
   lcd.print("input  ");
@@ -100,8 +102,8 @@ void power::display_all(void){
   lcd.print("  P:");
   lcd.print(input_power,2);
   delay(1000);
-  */
   
+  /*
   lcd.clear();
   lcd.setCursor(0,0);
   lcd.print("output ");
@@ -113,6 +115,7 @@ void power::display_all(void){
   lcd.print(" P:");
   lcd.print(output_power,2);
   delay(1000);
+  */
   /*
   lcd.clear();
   lcd.setCursor(0,0);
