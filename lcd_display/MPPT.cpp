@@ -5,7 +5,7 @@
 #include <LiquidCrystal.h>
 
 float duty = .3;
-float max_duty = .43;
+float max_duty = .45;
 float min_duty = .15;
 extern power MPPT;
 extern LiquidCrystal lcd;
@@ -51,10 +51,11 @@ void mppt(void){
 
 void duty_sweep(void){
   int i;
-  for(i = min_duty; i < max_duty; i++){
+  for(i = 10; i < 20; i++){
     MPPT.read_power();
     MPPT.display_all();
     set_PWM_duty_p9(i/100.0);
+    delay(1000);
   }
 }
 
@@ -73,9 +74,13 @@ void find_pp(void){
   float max_power = 0;
   float max_voltage= 0;
   float max_current = 0;
+
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("Finding PP...");
   
-  for (i = min_duty*100; i < max_duty*100; i++){
-    duty = i/(100.0);
+  for (i = 20; i < 40; i++){
+    duty = i/(200.0);
     set_PWM_duty_p9(duty);
     MPPT.read_output_power();
     if (MPPT.output_power > max_power ){
@@ -84,21 +89,20 @@ void find_pp(void){
       max_voltage = MPPT.output_current;
     }
     
-    delay(500);
+    delay(1000);
   }
   //Displays the pp results to the lcd
   lcd.clear();
   lcd.setCursor(0,0);
   lcd.print("Max Power: ");
   lcd.print(max_power,2);
+  lcd.print(" W");
   lcd.setCursor(0,1);
   lcd.print(max_current,2);
   lcd.print(" A, ");
   lcd.print(max_voltage,2);
-  lcd.print(" V, ");
-
-  while(1);
-
+  lcd.print(" V");
+  delay(5000);
   
 }
 

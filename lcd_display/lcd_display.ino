@@ -7,13 +7,14 @@
 #include "relay.hpp"
 #include "charger.hpp"
 #include "MPPT.hpp"
+#include "Adafruit_INA219.h"
 
+extern LiquidCrystal lcd;
 extern float duty;
 extern float max_duty;
 extern float min_duty;
 power MPPT;
-
-extern LiquidCrystal lcd;
+Adafruit_INA219 ina219;
 
 void setup() {
   //For debugging
@@ -26,14 +27,17 @@ void setup() {
   adc_init();
   mppt_init();
   set_PWM_frequency(50000);
-  set_PWM_duty_p9(.4);
+  set_PWM_duty_p9(.2);
   relay_on();
+  ina219.begin();
   delay(1000);
   
 }
 
-
-  //MPPT.read_power();
-  MPPT.display_all();
+void loop() {
+  float current_mA;
+   current_mA = ina219.getCurrent_mA();
+   Serial.print("Current:   "); Serial.println(current_mA);
+   delay(100);
 }
 
