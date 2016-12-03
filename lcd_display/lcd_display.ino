@@ -7,7 +7,7 @@
 #include "relay.hpp"
 #include "charger.hpp"
 #include "MPPT.hpp"
-#include "Adafruit_INA219.h"
+#include "Adafruit_INA219.hpp"
 
 extern LiquidCrystal lcd;
 extern float duty;
@@ -36,8 +36,11 @@ void setup() {
 
 void loop() {
   float current_mA;
+   lcd.clear();
    current_mA = ina219.getCurrent_mA();
-   Serial.print("Current:   "); Serial.println(current_mA);
+   Serial.print("Current:   "); 
+   Serial.println(current_mA);
+   lcd.print(current_mA);
    delay(100);
 }
 
