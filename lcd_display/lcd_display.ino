@@ -1,11 +1,11 @@
 #include <LiquidCrystal.h>
 #include <SPI.h>
-#include "adc.hpp"
 #include "lcd.hpp"
 #include "pwm.hpp"
 #include "power_sensing.hpp"
 #include "relay.hpp"
 #include "charger.hpp"
+#include "main_menu.hpp"
 #include "MPPT.hpp"
 #include "Adafruit_INA219.hpp"
 
@@ -13,34 +13,37 @@ extern LiquidCrystal lcd;
 extern float duty;
 extern float max_duty;
 extern float min_duty;
+
+#define left_button A3
+#define enter_button A2
+#define right_button A1
+
+
 power MPPT;
-Adafruit_INA219 ina219;
+Adafruit_INA219 output(0x40);
+Adafruit_INA219 input(0x41);
 
 void setup() {
   //For debugging
   Serial.begin(9600);
-
   //Initializations
   lcd_init();
   PWM_init();
   relay_init();
-  adc_init();
-  mppt_init();
+  button_init();
+  //mppt_init();
   set_PWM_frequency(50000);
-  set_PWM_duty_p9(.2);
-  relay_on();
-  ina219.begin();
+  set_PWM_duty_p9(.6);
+  output.begin();
+  input.begin();
   delay(1000);
-  
 }
 
 void loop() {
-  float current_mA;
-   lcd.clear();
-   current_mA = ina219.getCurrent_mA();
-   Serial.print("Current:   "); 
-   Serial.println(current_mA);
-   lcd.print(current_mA);
-   delay(100);
-}
+  duty_sweep(10,75);
+  //MPPT.read_power();
+  //MPPT.display_all();
+  //main_menu();
 
+
+}

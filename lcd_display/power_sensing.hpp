@@ -1,10 +1,6 @@
 #ifndef power_sensing_hpp
 #define power_sensing_hpp
 
-float read_voltage(int ch, float scale);
-float read_current(int ch, float scale);
-float power_efficiency(float input_power, float output_power);
-
 class power {
   public:
    power(void);
@@ -20,7 +16,9 @@ class power {
    void read_power(void);
    float power_efficiency(void);
    void display_all(void);
+   void display_output(void);
 };
 
+void output_sensing(power MPPT);
 
 #endif

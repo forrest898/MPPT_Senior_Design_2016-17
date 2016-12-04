@@ -1,57 +1,19 @@
-
+#include "Adafruit_INA219.hpp"
 #include "Arduino.h"
 #include "power_sensing.hpp"
-#include "adc.hpp"
 #include <LiquidCrystal.h>
+#include "main_menu.hpp"
+#include "relay.hpp"
+
+#define left_button A3
+#define enter_button A2
+#define right_button A1
 
 extern LiquidCrystal lcd;
+extern Adafruit_INA219 output;
+extern Adafruit_INA219 input;
 
-//ADC Channel definitions
-#define vin_ch 0
-#define iin_ch 1
-#define vout_ch 6
-#define iout_ch 7
-
-#define iin_scale 1.0
-#define vin_scale 1.0
-#define vout_scale 1.0
-#define iout_scale 1.0
-
-float vin_gain = 5 * vin_scale;
-float iin_gain =  iin_scale;
-float vout_gain = 5 * vout_scale;
-float iout_gain = iout_scale;
-
-float read_voltage(int ch, float scale){
-  float voltage;
-  int i;
-  int iterations = 10;
-  voltage = 0.0;
-  //averaging for smoothing
-  for(i = 0; i < iterations; i++){
-    voltage += read_adc(ch);
-    delay(10);
-  }
-  return voltage * scale / iterations;
-}
-
-float read_current(int ch, float scale){
-  float current;
-  int i;
-  int iterations =10; 
-  current = 0.0;
-  //averaging for smoothing
-  for(i = 0; i < iterations; i++){
-    current += read_adc(ch);
-    delay(10);
-  }
-  return current * scale / iterations;
-}
-
-float power_efficiency(float input_power, float output_power){
-  return input_power/output_power;
-}
-
+//POWER is a struct that hold the following variables
 power::power(void){
    input_voltage = 0.0;
    input_current = 0.0;
@@ -61,50 +23,31 @@ power::power(void){
    output_power = 0.0;
    old_output_power = 0.0;
 }
+//Reads the input current and bus voltage from the input power sensing unit
+void power::read_input_power(void){
+  input_current = input.getCurrent_mA() / 1000;
+  input_voltage = input.getBusVoltage_V() + (input.getShuntVoltage_mV() / 1000);
+  input_power = input_current * input_voltage;
 
-void power::read_input_power(void){ 
-  input_voltage = read_voltage(vin_ch,vin_gain);
-  input_voltage = input_voltage * .97 + .07 ;
-  if (input_voltage < 0.1 ) input_voltage = 0.0;
-  input_current = read_current(iin_ch,iin_gain);
-  input_current = input_current * 1.3;
-  if (input_current < 0.1) input_current = 0.0;
-  input_power = input_voltage * input_current;
 }
-
+//Reads the output current and bus votlage from the output power sensing unit
 void power::read_output_power(void){
-  output_voltage = read_voltage(vout_ch, vout_gain);
-  output_voltage = output_voltage ;
-  output_current = read_current(iout_ch, iout_gain);
-  output_current = output_current;
   old_output_power = output_power;
-  output_power = output_voltage * output_current;
+  output_current = output.getCurrent_mA() / 1000;
+  output_voltage = output.getBusVoltage_V() + (output.getShuntVoltage_mV() / 1000);
+  output_power = output_current * output_voltage;
 }
-
+//Returns power efficiency of the SEPIC
 float power::power_efficiency(void){
-  return output_power/ input_power;
+  return input_power/ output_power;
 }
-
+// Read both input power and output power simultaneously
 void power::read_power(void){
   power::read_input_power();
   power::read_output_power();
 }
-
-void power::display_all(void){
-  
-  lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.print("input  ");
-  lcd.print(" V:");
-  lcd.print(input_voltage,3);
-  lcd.setCursor(0,1);
-  lcd.print("I:");
-  lcd.print(input_current,3);
-  lcd.print("  P:");
-  lcd.print(input_power,2);
-  delay(1000);
-  
-  /*
+//Displays just the output power sensing
+void power::display_output(void){
   lcd.clear();
   lcd.setCursor(0,0);
   lcd.print("output ");
@@ -115,16 +58,58 @@ void power::display_all(void){
   lcd.print(output_current,2);
   lcd.print(" P:");
   lcd.print(output_power,2);
-  delay(1000);*/
-  
-  /*
+  delay(1000);
+}
+
+// Displats input power, output power, and power efficiency
+void power::display_all(void){
+
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("input  ");
+  lcd.print(" V:");
+  lcd.print(input_voltage,2);
+  lcd.setCursor(0,1);
+  lcd.print("I:");
+  lcd.print(input_current,2);
+  lcd.print("  P:");
+  lcd.print(input_power,2);
+  delay(1000);
+
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("output ");
+  lcd.print("V:");
+  lcd.print(output_voltage,2);
+  lcd.setCursor(0,1);
+  lcd.print("I:");
+  lcd.print(output_current,2);
+  lcd.print(" P:");
+  lcd.print(output_power,2);
+  delay(1000);
+
   lcd.clear();
   lcd.setCursor(0,0);
   lcd.print("Power efficiency ");
   lcd.setCursor(0,1);
-  lcd.print(power_efficiency()*100,2);
+  lcd.print(power::power_efficiency()*100,2);
   lcd.print("%");
-  delay(1000);*/
+  delay(1000);
 
+}
+
+void output_sensing(power MPPT){
+  relay_on();
+  delay(100);
+  while(!digitalRead(enter_button)){
+    MPPT.read_output_power();
+    MPPT.display_output();
+    delay(500);
+  }
+  lcd.clear();
+  while(digitalRead(enter_button));
+  relay_off();
+  delay(100);
+  
 }
 

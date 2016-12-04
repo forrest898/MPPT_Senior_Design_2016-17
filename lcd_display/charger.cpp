@@ -17,7 +17,7 @@ float bat_gain = (1/5);
 
 //reads battery voltage
 float check_battery(void){
-    return read_voltage(bat_ch, bat_gain);
+//    return read_voltage(bat_ch, bat_gain);
 }
 
 //If the battery 
@@ -29,7 +29,6 @@ void constant_current(float current){
     else SEPIC_increase(.01); 
     delay(100);
   }
-
 }
 
 void constant_voltage(void){
