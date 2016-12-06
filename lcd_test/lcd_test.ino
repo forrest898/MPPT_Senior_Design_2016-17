@@ -11,7 +11,7 @@ void setup() {
 
 void loop() {
   lcd.clear();
-  lcd.print("Penisssss");
+  lcd.print("hello, its me");
   delay(100);
 
 }

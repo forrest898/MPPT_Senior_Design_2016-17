@@ -40,10 +40,10 @@ void setup() {
 }
 
 void loop() {
-  duty_sweep(10,75);
+  //duty_sweep(10,75);
   //MPPT.read_power();
   //MPPT.display_all();
-  //main_menu();
+  main_menu();
 
 
 }
