@@ -6,5 +6,7 @@ void main_menu(void);
 void main_menu1(void);
 void main_menu2(void);
 void main_menu3(void);
+void main_menu4(void);
+void main_menu5(void);
 
 #endif

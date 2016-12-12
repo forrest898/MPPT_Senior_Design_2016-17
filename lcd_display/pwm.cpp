@@ -1,6 +1,10 @@
 #include "Arduino.h"
 #include "pwm.hpp"
 
+#define left_button A3
+#define enter_button A2
+#define right_button A1
+
 //Initializes PWM on pin 9, fast pwm mode
 void PWM_init(void){
   DDRB |= (1 << DDB1) | (1 << DDB2);
@@ -31,3 +35,6 @@ void set_PWM_duty_p10(float duty){
   percent = int(duty * ICR1);
   OCR1B = percent;
 }
+
+
+

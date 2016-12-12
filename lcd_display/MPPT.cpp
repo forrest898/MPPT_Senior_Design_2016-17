@@ -9,9 +9,9 @@
 #define enter_button A2
 #define right_button A1
 
-float duty = .1;
-float max_duty = .45;
-float min_duty = .1;
+float duty = .05;
+float max_duty = .20;
+float min_duty = .01;
 extern power MPPT;
 extern LiquidCrystal lcd;
 
@@ -31,23 +31,30 @@ void SEPIC_decrease(float increment){
 
 //Indefinitely tracks the maximum power point using the perturb and observe method
 void mppt(void){
+   duty = min_duty;
+   MPPT.read_power();
+   
    while(!digitalRead(enter_button)){
     //read input & output power
     //MPPT.read_power();
-    MPPT.read_output_power();
+    MPPT.read_power();
+    lcd.clear();
+    lcd.print(MPPT.old_output_power);
+    lcd.print(" ");
+    lcd.print(MPPT.output_power);
+    lcd.print(" ");
+    lcd.print(duty,3);
 
     //If the power decreases, go the other way
     if (MPPT.old_output_power > MPPT.output_power ){
-      SEPIC_decrease(.33);
-      set_PWM_duty_p9(duty);
+      SEPIC_decrease(.005);
     }
 
     //If the power increases, keep going
     else if(MPPT.old_output_power < MPPT.output_power){
-      SEPIC_increase(.33);
-      set_PWM_duty_p9(duty);
+      SEPIC_increase(.005);
     }
-
+    delay(1000);
     MPPT.display_all();
   }
   lcd.clear();
@@ -105,39 +112,92 @@ void find_pp(void){
   float max_voltage= 0;
   float max_current = 0;
 
-  lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.print("Finding PP...");
-  delay(1000);
-  
+
   for (i = min_duty * 100 * 2 ; i < max_duty * 100 * 2; i++){ //half a percentage steps
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("Finding PP...");
+    delay(1000);
     duty = i/(200.0);
-    Serial.println(i);
+    lcd.setCursor(0,1);
+    lcd.print(duty,3);
+    lcd.print(" ");
+    
     set_PWM_duty_p9(duty);
     MPPT.read_output_power();
+
+    lcd.print(MPPT.output_power,3);
+    
     if (MPPT.output_power > max_power ){
       max_power = MPPT.output_power;
       max_current = MPPT.output_current;
-      max_voltage = MPPT.output_current;
+      max_voltage = MPPT.output_voltage;
     }  
-    delay(100);
+    delay(1000);
   }
   //Displays the pp results to the lcd
   lcd.clear();
   lcd.setCursor(0,0);
   lcd.print("Max Power: ");
-  lcd.print(max_power,2);
+  lcd.print(max_power,3);
   lcd.print(" W");
   lcd.setCursor(0,1);
-  lcd.print(max_current,2);
+  lcd.print(max_current,3);
   lcd.print(" A ");
-  lcd.print(max_voltage,2);
+  lcd.print(max_voltage,3);
   lcd.print(" V");
   while(!digitalRead(enter_button));
   lcd.clear();
   while(digitalRead(enter_button));
   delay(100);
   
+}
+
+void sepic_adjust(void){
+  int eb,rb,lb;
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print(duty);
+  
+  while(1){
+
+    while(1){
+        MPPT.read_output_power();
+        lcd.setCursor(0,1);
+        lcd.print("V:");
+        lcd.print(MPPT.output_voltage,3);
+        lcd.print("  I:");
+        lcd.print(MPPT.output_current,3);
+        lcd.setCursor(8,0);
+        lcd.print("P:");
+        lcd.print(MPPT.output_power,3);
+        
+        eb = digitalRead(enter_button);
+        rb = digitalRead(right_button);
+        lb = digitalRead(left_button);
+        if(eb | rb | lb){
+          while((digitalRead(enter_button) | digitalRead(right_button) | digitalRead(left_button))); 
+          break;
+        }
+        delay(10);
+    }
+    if(eb) break;
+    if(rb) {
+      duty += .01;
+      lcd.clear();
+      lcd.setCursor(0,0);
+      lcd.print(duty);
+      set_PWM_duty_p9(duty);
+      
+    }
+    if(lb) {
+      duty -= .01;
+      lcd.clear();
+      lcd.setCursor(0,0);
+      lcd.print(duty);
+      set_PWM_duty_p9(duty);
+    }
+  }
 }
 
 

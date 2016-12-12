@@ -34,12 +34,14 @@ void power::read_input_power(void){
 void power::read_output_power(void){
   old_output_power = output_power;
   output_current = output.getCurrent_mA() / 1000;
+  if(output_current < 0) output_current *= -1;
   output_voltage = output.getBusVoltage_V() + (output.getShuntVoltage_mV() / 1000);
+  if(output_voltage < 0) output_voltage *= -1;
   output_power = output_current * output_voltage;
 }
 //Returns power efficiency of the SEPIC
 float power::power_efficiency(void){
-  return input_power/ output_power;
+  return output_power/input_power;
 }
 // Read both input power and output power simultaneously
 void power::read_power(void){

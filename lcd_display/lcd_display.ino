@@ -33,17 +33,12 @@ void setup() {
   button_init();
   //mppt_init();
   set_PWM_frequency(50000);
-  set_PWM_duty_p9(.6);
+  set_PWM_duty_p9(.1);
   output.begin();
   input.begin();
   delay(1000);
 }
 
 void loop() {
-  //duty_sweep(10,75);
-  //MPPT.read_power();
-  //MPPT.display_all();
   main_menu();
-
-
 }

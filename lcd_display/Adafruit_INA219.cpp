@@ -309,7 +309,7 @@ void Adafruit_INA219::setCalibration_16V_400mA(void) {
   // Set multipliers to convert raw current/power values
   ina219_currentDivider_mA = 20;  // Current LSB = 50uA per bit (1000/50 = 20)
   ina219_powerDivider_mW = 1;     // Power LSB = 1mW per bit
-
+  
   // Set Calibration register to 'Cal' calculated above 
   wireWriteRegister(INA219_REG_CALIBRATION, ina219_calValue);
   

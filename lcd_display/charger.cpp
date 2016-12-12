@@ -4,10 +4,15 @@
 #include "MPPT.hpp"
 #include <LiquidCrystal.h>
 
-#define bat_ch  4
+#define bat_ch  A6
+
 #define bat_threshold 14.5
 #define current_threshold .3
 #define float_voltage 13.2
+
+#define left_button A3
+#define enter_button A2
+#define right_button A1
 
 extern LiquidCrystal lcd;
 extern power MPPT;
@@ -17,10 +22,10 @@ float bat_gain = (1/5);
 
 //reads battery voltage
 float check_battery(void){
-//    return read_voltage(bat_ch, bat_gain);
+  return(analogRead(bat_ch) * 1024 * 5);
 }
 
-//If the battery 
+//Keeps the battery pulling a constant current 
 void constant_current(float current){
   while (check_battery() < bat_threshold){
     MPPT.read_output_power();
@@ -31,22 +36,25 @@ void constant_current(float current){
   }
 }
 
+//keeps the battery in constant_voltage
 void constant_voltage(void){
   while( MPPT.output_current > current_threshold){
     MPPT.read_output_power();
-
     if (check_battery() > bat_threshold) SEPIC_decrease(.01);
     else SEPIC_increase(.01);
     delay(100);
   }
 }
 
+//keeps the battery in float state
 void float_charge(void){
-  while(1){
+  while(!digitalRead(enter_button)){
     if (check_battery() > float_voltage) SEPIC_decrease(.01);
     else SEPIC_increase(.01);
     delay(100);
   }
+  lcd.clear();
+  while(digitalRead(enter_button));
 }
 
 //Charge the battery through the 3 states
