@@ -10,7 +10,7 @@
 #define right_button A1
 
 float duty = .05;
-float max_duty = .20;
+float max_duty = .35;
 float min_duty = .01;
 extern power MPPT;
 extern LiquidCrystal lcd;
@@ -38,12 +38,6 @@ void mppt(void){
     //read input & output power
     //MPPT.read_power();
     MPPT.read_power();
-    lcd.clear();
-    lcd.print(MPPT.old_output_power);
-    lcd.print(" ");
-    lcd.print(MPPT.output_power);
-    lcd.print(" ");
-    lcd.print(duty,3);
 
     //If the power decreases, go the other way
     if (MPPT.old_output_power > MPPT.output_power ){
@@ -152,7 +146,7 @@ void find_pp(void){
   delay(100);
   
 }
-
+// User adjustable SEPIC values that print voltage, power, and current
 void sepic_adjust(void){
   int eb,rb,lb;
   lcd.clear();

@@ -92,14 +92,17 @@ void power::display_all(void){
 
   lcd.clear();
   lcd.setCursor(0,0);
-  lcd.print("Power efficiency ");
-  lcd.setCursor(0,1);
+  lcd.print("Efficiency: ");
   lcd.print(power::power_efficiency()*100,2);
   lcd.print("%");
+  lcd.setCursor(0,1);
+  lcd.print("Duty Cycle:");
+  lcd.print(duty);
+
   delay(1000);
 
 }
-
+// Function that turns on relay to read power from the power sensing terminal
 void output_sensing(power MPPT){
   relay_on();
   delay(100);
