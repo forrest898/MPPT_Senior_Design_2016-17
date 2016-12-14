@@ -25,7 +25,9 @@ Adafruit_INA219 input(0x41);
 
 void setup() {
   //For debugging
+
   Serial.begin(9600);
+  Serial.print("HERE");
   //Initializations
   lcd_init();
   PWM_init();
@@ -34,9 +36,11 @@ void setup() {
   //mppt_init();
   set_PWM_frequency(50000);
   set_PWM_duty_p9(.1);
+  Serial.print("HERE");
   output.begin();
-  input.begin();
+  //input.begin();
   delay(1000);
+
 }
 
 void loop() {

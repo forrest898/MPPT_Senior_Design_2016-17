@@ -77,6 +77,7 @@ void main_menu2(void){
 }
 
 void main_menu3(void){
+  digitalWrite(3,HIGH);
   int eb,rb,lb;
 	lcd.clear();
 	lcd.setCursor(0,0);
@@ -94,6 +95,7 @@ void main_menu3(void){
   if(eb) output_sensing(MPPT);
 	if(rb) main_menu4();
 	if(lb) main_menu2();
+  digitalWrite(3,LOW);
 }
 
 void main_menu4(void){

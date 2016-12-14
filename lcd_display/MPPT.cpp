@@ -11,13 +11,14 @@
 
 float duty = .05;
 float max_duty = .35;
+float absolute_max = .65;
 float min_duty = .01;
 extern power MPPT;
 extern LiquidCrystal lcd;
 
 //Increases SEPIC duty cycle by an increment, never go above max_duty
 void SEPIC_increase(float increment){
-  if (duty + increment > max_duty) duty = max_duty;
+  if (duty + increment > absolute_max) duty = max_duty;
   else duty += increment;
   set_PWM_duty_p9(duty);
 }
@@ -79,10 +80,10 @@ void duty_sweep(int start_duty, int end_duty ){
 void mppt_init(void){
   int i;
   MPPT.read_power();
-  
-  for(i = 10; i < 100; i++){
+  //sweeps over a 
+  for(i = 40; i < absolute_max*2*100; i++){
     MPPT.read_output_power();
-    set_PWM_duty_p9(i/200.0);
+    set_PWM_duty_p9(i/200.0); //allows for half percent increments
     lcd.clear();
     lcd.setCursor(0,0);
     lcd.print("Initializing...");
@@ -90,23 +91,31 @@ void mppt_init(void){
     lcd.print(i/200.0);
     lcd.print(" ");
     lcd.print(MPPT.output_voltage);
-    if(MPPT.output_voltage >= 25.5){
+    if(MPPT.output_voltage >= 24){
       max_duty = i/200.0;
-      return;
+      break;
     }
     delay(1000);
   }
+  if(i == absolute_max*2*100) max_duty = absolute_max;
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("Max Duty:");
+  lcd.print(max_duty);
+  delay(3000);
 
 }
 
 //Finds the power point in a single, slow sweep
 void find_pp(void){
+  
   int i;
   float max_power = 0;
   float max_voltage= 0;
   float max_current = 0;
 
-
+  mppt_init();
+ 
   for (i = min_duty * 100 * 2 ; i < max_duty * 100 * 2; i++){ //half a percentage steps
     lcd.clear();
     lcd.setCursor(0,0);
@@ -114,12 +123,14 @@ void find_pp(void){
     delay(1000);
     duty = i/(200.0);
     lcd.setCursor(0,1);
+    lcd.print("D:");
     lcd.print(duty,3);
     lcd.print(" ");
     
-    set_PWM_duty_p9(duty);
+    SEPIC_increase(duty);
     MPPT.read_output_power();
-
+    
+    lcd.print("P:");
     lcd.print(MPPT.output_power,3);
     
     if (MPPT.output_power > max_power ){

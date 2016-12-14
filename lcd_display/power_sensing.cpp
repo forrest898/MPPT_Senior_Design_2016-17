@@ -37,6 +37,7 @@ void power::read_output_power(void){
   old_output_power = output_power;
   output_current = output.getCurrent_mA() / 1000;
   if(output_current < 0) output_current *= -1;
+  if(output_current > .5) output_current = .94 * output_current + .005;
   output_voltage = output.getBusVoltage_V() + (output.getShuntVoltage_mV() / 1000);
   if(output_voltage < 0) output_voltage *= -1;
   output_power = output_current * output_voltage;
