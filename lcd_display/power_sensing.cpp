@@ -4,11 +4,13 @@
 #include <LiquidCrystal.h>
 #include "main_menu.hpp"
 #include "relay.hpp"
+#include "MPPT.hpp"
 
 #define left_button A3
 #define enter_button A2
 #define right_button A1
 
+extern float duty;
 extern LiquidCrystal lcd;
 extern Adafruit_INA219 output;
 extern Adafruit_INA219 input;

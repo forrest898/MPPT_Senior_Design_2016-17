@@ -7,7 +7,7 @@
 #define bat_ch  A6
 
 #define bat_threshold 14.5
-#define current_threshold .3
+#define current_threshold .2
 #define float_voltage 13.2
 
 #define left_button A3
@@ -18,11 +18,16 @@ extern LiquidCrystal lcd;
 extern power MPPT;
 extern float duty;
 
-float bat_gain = (1/5);
+float bat_gain = 3.43;
 
 //reads battery voltage
 float check_battery(void){
-  return(analogRead(bat_ch) * 1024 * 5);
+  float batt_v = 0;
+  for(int i = 0; i < 5; i++) {
+    batt_v += (analogRead(bat_ch) * bat_gain * 5.0 )/ 1024.0;
+  }
+  batt_v /= 5;
+  return batt_v;
 }
 
 //Keeps the battery pulling a constant current 
@@ -32,6 +37,10 @@ void constant_current(float current){
     
     if (MPPT.output_current > current) SEPIC_decrease(.01);
     else SEPIC_increase(.01); 
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("Batt_Volt: ");
+    lcd.print(check_battery());
     delay(100);
   }
 }
@@ -59,6 +68,7 @@ void float_charge(void){
 
 //Charge the battery through the 3 states
 void charge(void){
+  /*
   lcd.clear();
   lcd.setCursor(0,0);
   lcd.print("Constant Current");
@@ -71,5 +81,13 @@ void charge(void){
   lcd.setCursor(0,0);
   lcd.print("Float");
   float_charge();
+  */
+  while(!digitalRead(enter_button)) {
+
+    constant_current(.5);
+    
+  }
+  lcd.clear();
+  while(digitalRead(enter_button));
 }
 
