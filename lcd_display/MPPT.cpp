@@ -37,7 +37,6 @@ void mppt(void){
    
    while(!digitalRead(enter_button)){
     //read input & output power
-    //MPPT.read_power();
     MPPT.read_power();
 
     //If the power decreases, go the other way

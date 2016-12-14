@@ -7,7 +7,7 @@
 #define bat_ch  A6
 
 #define bat_threshold 14.2
-#define current_threshold .2
+#define current_threshold .1
 #define float_voltage 13.2
 
 #define left_button A3
@@ -72,11 +72,10 @@ void float_charge(void){
 
 //Charge the battery through the 3 states
 void charge(void){
-  /*
   lcd.clear();
   lcd.setCursor(0,0);
   lcd.print("Constant Current");
-  constant_current(1.1);
+  constant_current(.2);
   lcd.clear();
   lcd.setCursor(0,0);
   lcd.print("Constant Voltage");
@@ -85,12 +84,5 @@ void charge(void){
   lcd.setCursor(0,0);
   lcd.print("Float");
   float_charge();
-  */
-  constant_current(.5);
-  lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.print("NIgga we did it");
-  while(!digitalRead(enter_button));
-  while(digitalRead(enter_button));
 }
 
