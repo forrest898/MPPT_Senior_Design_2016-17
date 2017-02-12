@@ -19,6 +19,7 @@ extern LiquidCrystal lcd;
 //Increases SEPIC duty cycle by an increment, never go above max_duty
 void SEPIC_increase(float increment){
   if (duty + increment > absolute_max) duty = max_duty;
+  else if (duty + increment < min_duty) duty = min_duty;
   else duty += increment;
   set_PWM_duty_p9(duty);
 }
@@ -34,6 +35,8 @@ void SEPIC_decrease(float increment){
 void mppt(void){
    duty = min_duty;
    MPPT.read_power();
+   float step = .005;
+   int direction = 1;
    
    while(!digitalRead(enter_button)){
     //read input & output power
@@ -41,12 +44,13 @@ void mppt(void){
 
     //If the power decreases, go the other way
     if (MPPT.old_output_power > MPPT.output_power ){
-      SEPIC_decrease(.005);
+      direction *= -1; //no matter which direction you were going, change direction
+      SEPIC_increase(step*direction);
     }
 
     //If the power increases, keep going
     else if(MPPT.old_output_power < MPPT.output_power){
-      SEPIC_increase(.005);
+      SEPIC_increase(step*direction);
     }
     delay(1000);
     MPPT.display_all();
